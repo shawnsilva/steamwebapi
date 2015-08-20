@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # user.py
 # Version: 0.1.0
@@ -22,7 +22,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-import re, json
+import re
+import json
 from api import ISteamUser, IPlayerService, ISteamUserStats
 
 class UserInfo:
@@ -82,15 +83,15 @@ class UserInfo:
     def personastate(self, value):
         self._personastate = value
 
-def GetUserInfo(user):
+def get_user_info(user):
     userinfo = UserInfo()
     steamuser = ISteamUser()
     regex = re.compile('^\d{17}$')
     if regex.match(user):
         userinfo.steamid = user
     else:
-        userinfo.steamid = json.loads(steamuser.ResolveVanityURL(user))['response']['steamid']
-    usersummary = json.loads(steamuser.GetPlayerSummaries(userinfo.steamid))['response']['players'][0]
+        userinfo.steamid = json.loads(steamuser.resolve_vanity_url(user))['response']['steamid']
+    usersummary = json.loads(steamuser.get_player_summaries(userinfo.steamid))['response']['players'][0]
     for key in list(usersummary.keys()):
         if isinstance(usersummary[key], int):
             exec('userinfo.' + key + ' = ' + str(usersummary[key]))
@@ -100,7 +101,7 @@ def GetUserInfo(user):
     return userinfo
 
 def main():
-    user = GetUserInfo("sinkigobopo")
+    user = get_user_info("vanityURLorSteamID")
     attrs = vars(user)
     print(attrs)
     #print ', '.join("%s: %s" % item for item in attrs.items())

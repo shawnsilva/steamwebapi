@@ -1,13 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # api.py
-# Version: 0.1.0
+# Version: 0.1.1
 # By: Shawn Silva (ssilva at jatgam dot com)
 # 
 # Created: 07/05/2013
-# Modified: 07/05/2013
+# Modified: 08/20/2015
 # 
-# Copyright (C) 2013  Shawn Silva
+# Copyright (C) 2013-2015  Shawn Silva
 # -------------------------------
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,8 +37,10 @@ elif PYMAJORVER == 2 and (PYMINORVER == 7 or PYMINORVER == 6):
 else:
     raise PythonVersionError("Python Version 2.6 or greater required.")
 
+import re
 
-APIKEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' #Your Steam API Key
+
+APIKEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' #Your Steam API Key
 DEFAULTFORMAT = 'json' #Set to: xml, json, or vdf
 DEFAULTLANG = 'en' #Default language
 
@@ -331,9 +333,71 @@ class IPlayerService(_SteamWebAPI):
         data = self.retrieve_request(url)
         return data
 
+    def get_steam_level(self, steamID, format=None):
+        """Returns the Steam Level of a user.
+
+        steamID: The users ID
+        format: Return format. None defualts to json. (json, xml, vdf)
+
+        """
+        parameters = {'steamid' : steamID}
+        if format is not None:
+            parameters['format'] = format
+        url = self.create_request_url(self.interface, 'GetSteamLevel', 1,
+            parameters)
+        data = self.retrieve_request(url)
+        return data
+
+    def get_badges(self, steamID, format=None):
+        """Gets badges that are owned by a specific user
+
+        steamID: The users ID
+        format: Return format. None defualts to json. (json, xml, vdf)
+
+        """
+        parameters = {'steamid' : steamID}
+        if format is not None:
+            parameters['format'] = format
+        url = self.create_request_url(self.interface, 'GetBadges', 1,
+            parameters)
+        data = self.retrieve_request(url)
+        return data
+
+    def get_community_badge_progress(self, steamID, badgeID, format=None):
+        """Gets all the quests needed to get the specified badge, and which are completed.
+
+        steamID: The users ID
+        badgeID: The badge we're asking about
+        format: Return format. None defualts to json. (json, xml, vdf)
+
+        """
+        parameters = {'steamid' : steamID, 'badgeid' : badgeID}
+        if format is not None:
+            parameters['format'] = format
+        url = self.create_request_url(self.interface, 'GetCommunityBadgeProgress', 1,
+            parameters)
+        data = self.retrieve_request(url)
+        return data
+
+    def is_playing_shared_game(self, steamID, appid_playing, format=None):
+        """Returns valid lender SteamID if game currently played is borrowed.
+
+        steamID: The users ID
+        appid_playing: The game player is currently playing
+        format: Return format. None defualts to json. (json, xml, vdf)
+
+        """
+        parameters = {'steamid' : steamID, 'appid_playing' : appid_playing}
+        if format is not None:
+            parameters['format'] = format
+        url = self.create_request_url(self.interface, 'IsPlayingSharedGame', 1,
+            parameters)
+        data = self.retrieve_request(url)
+        return data
+
 class ISteamWebAPIUtil(_SteamWebAPI):
     def __init__(self):
-        self.interface = ISteamWebAPIUtil
+        self.interface = 'ISteamWebAPIUtil'
         super(ISteamWebAPIUtil, self).__init__()
 
     def get_server_info(self, format=None):
@@ -364,14 +428,50 @@ class ISteamWebAPIUtil(_SteamWebAPI):
         data = self.retrieve_request(url)
         return data
 
+class SteamCommunityXML(_SteamWebAPI):
+    def __init__(self):
+        super(SteamCommunityXML, self).__init__()
+
+    def create_request_url(self, steamID):
+        """Create the url to submit to the Steam Community XML feed."""
+        regex = re.compile('^\d{17}$')
+        if regex.match(steamID):
+            url = "http://steamcommunity.com/profiles/%s/?xml=1" % (steamID)
+        else:
+            url = "http://steamcommunity.com/id/%s/?xml=1" % (steamID)
+        return url
+
+    def retrieve_request(self, url):
+        """Open the given url and return the response
+
+        url: The url to open.
+
+        """
+        try:
+            data = urlopen(url)
+        except:
+            print("Error Retrieving Data from Steam")
+            sys.exit(2)
+        return data.read()
+
+    def get_community_info(self, steamID):
+        """Request the Steam Community XML feed for a specific user."""
+        url = self.create_request_url(steamID)
+        data = self.retrieve_request(url)
+        return data
+
 def main():
     # Tests
     import json
     steamuser = ISteamUser()
-    steamid = json.loads(steamuser.resolve_vanity_url("vanityurl"))['response']['steamid']
+    steamid = json.loads(steamuser.resolve_vanity_url("vanityURL"))['response']['steamid']
     #jsondata = json.loads(data)
     print(steamid)
     print(json.loads(steamuser.get_player_summaries(steamid))['response']['players'])
+    steamcomm = SteamCommunityXML()
+    print(steamcomm.get_community_info('vanityURL'))
+    sapi = ISteamWebAPIUtil()
+    print(json.loads(sapi.get_supported_API_list()))
 
 if __name__ == "__main__":
     main()
