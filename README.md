@@ -1,4 +1,4 @@
-# Steam Web API
+# Steam Web API [![Build Status](https://travis-ci.org/shawnsilva/steamwebapi.svg?branch=master)](https://travis-ci.org/shawnsilva/steamwebapi)
 ## README
 
 ### Description
@@ -12,8 +12,8 @@ The following example will assume that JSON data is being returned.
 ```python
 from api import ISteamUser, IPlayerService, ISteamUserStats
 steamuserinfo = ISteamUser()
-steamid = json.loads(steamuserinfo.resolve_vanity_url("profileURL"))['response']['steamid']
-usersummary = json.loads(steamuserinfo.get_player_summaries(steamid))['response']['players'][0]
+steamid = steamuserinfo.resolve_vanity_url("profileURL")['response']['steamid']
+usersummary = steamuserinfo.get_player_summaries(steamid)['response']['players'][0]
 ```
 
 The Steam Web API has multiple inferfaces (e.g., ISteamUser, IPlayerService)
@@ -24,12 +24,14 @@ set by the `DEFAULTFORMAT` variable or changed in the paramters of the
 function: `steamuserinfo.resolve_vanity_url("profileURL", format="xml")`.
 
 ### Steam Web API Documentation
-https://developer.valvesoftware.com/wiki/Steam_Web_API
-http://wiki.teamfortress.com/wiki/WebAPI
-https://partner.steamgames.com/documentation/community_data
+	* https://developer.valvesoftware.com/wiki/Steam_Web_API
+	* http://wiki.teamfortress.com/wiki/WebAPI
+	* https://partner.steamgames.com/documentation/community_data
 
 ###REQUIREMENTS
 * Python
+	* 3.5.*
+	* 3.4.*
     * 3.3.*
     * 3.2.*
     * 2.7.*
