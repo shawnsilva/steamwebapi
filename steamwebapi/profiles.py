@@ -23,10 +23,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 import re
-import json
+
 from api import ISteamUser, IPlayerService, ISteamUserStats
 
-class UserInfo:
+class User:
     VisibilityState = {1 : "Private", 2 : "Friends Only", 3 : "Friends of Friends", 4 : "Users Only", 5 : "Public"}
     PersonaState = {0 : "Offline", 1 : "Online", 2 : "Busy", 3 : "Away", 4 : "Snooze", 5 : "Looking to Trade", 6 : "Looking to Play"}
 
@@ -83,6 +83,22 @@ class UserInfo:
     def personastate(self, value):
         self._personastate = value
 
+class Group:
+    def __init__(self):
+        self.groupid = None #The Group's 64bit ID
+        self.groupname = None
+        self.groupurl = None
+        self.headline = None
+        self.summary = None
+        self.avatar = None
+        self.avatarmedium = None
+        self.avatarfull = None
+        self.membercount = None
+        self.membersinchat = None
+        self.membersingame = None
+        self.membersonline = None
+
+
 def get_user_info(user):
     userinfo = UserInfo()
     steamuser = ISteamUser()
@@ -90,8 +106,8 @@ def get_user_info(user):
     if regex.match(user):
         userinfo.steamid = user
     else:
-        userinfo.steamid = json.loads(steamuser.resolve_vanity_url(user))['response']['steamid']
-    usersummary = json.loads(steamuser.get_player_summaries(userinfo.steamid))['response']['players'][0]
+        userinfo.steamid = steamuser.resolve_vanity_url(user)['response']['steamid']
+    usersummary = steamuser.get_player_summaries(userinfo.steamid)['response']['players'][0]
     for key in list(usersummary.keys()):
         if isinstance(usersummary[key], int):
             exec('userinfo.' + key + ' = ' + str(usersummary[key]))
@@ -101,7 +117,7 @@ def get_user_info(user):
     return userinfo
 
 def main():
-    user = get_user_info("vanityURLorSteamID")
+    user = get_user_info("vanityURL")
     attrs = vars(user)
     print(attrs)
     #print ', '.join("%s: %s" % item for item in attrs.items())

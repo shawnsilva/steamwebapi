@@ -37,10 +37,11 @@ elif PYMAJORVER == 2 and (PYMINORVER == 7 or PYMINORVER == 6):
 else:
     raise PythonVersionError("Python Version 2.6 or greater required.")
 
+import json
+import os
 import re
 
-
-APIKEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' #Your Steam API Key
+APIKEY = os.environ.get('STEAM_API_KEY')
 DEFAULTFORMAT = 'json' #Set to: xml, json, or vdf
 DEFAULTLANG = 'en' #Default language
 
@@ -81,6 +82,20 @@ class _SteamWebAPI(object):
             sys.exit(2)
         return data.read().decode('utf-8')
 
+    def return_data(self, data, format=None):
+        """Format and return data appropriate to the requested API format.
+
+        data: The data retured by the api request
+
+        """
+        if format is None:
+            format = self.format
+        if format == "json":
+            formatted_data = json.loads(data)
+        else: 
+            formatted_data = data
+        return formatted_data
+
 class ISteamUser(_SteamWebAPI):
     def __init__(self):
         self.interface = 'ISteamUser'
@@ -100,7 +115,7 @@ class ISteamUser(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetFriendsList', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_player_bans(self, steamIDS, format=None):
         """Request the communities a steam id is banned in.
@@ -115,7 +130,7 @@ class ISteamUser(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetPlayerBans', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_player_summaries(self, steamIDS, format=None):
         """
@@ -131,7 +146,7 @@ class ISteamUser(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetPlayerSummaries', 2,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_user_group_list(self, steamID, format=None):
         """Request a list of groups a user is subscribed to.
@@ -146,22 +161,24 @@ class ISteamUser(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetUserGroupList', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
-    def resolve_vanity_url(self, vanityURL, format=None):
+    def resolve_vanity_url(self, vanityURL, url_type=1, format=None):
         """Request the steam id associated with a vanity url.
 
         vanityURL: The users vanity URL
+        url_type: The type of vanity URL. 1 (default): Individual profile, 
+                    2: Group, 3: Official game group
         format: Return format. None defualts to json. (json, xml, vdf)
 
         """
-        parameters = {'vanityurl' : vanityURL}
+        parameters = {'vanityurl' : vanityURL, "url_type" : url_type}
         if format is not None:
             parameters['format'] = format
         url = self.create_request_url(self.interface, 'ResolveVanityUrl', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
 class ISteamUserStats(_SteamWebAPI):
     def __init__(self):
@@ -182,7 +199,7 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface,
             'GetGlobalAchievementPercentagesForApp', 2, parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_global_stats_for_game(self, appID, count, names, startdate,
             enddate, format=None):
@@ -212,7 +229,7 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetGlobalStatsForGame', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_number_of_current_players(self, appID, format=None):
         """Request the current number of players for a given app.
@@ -227,7 +244,7 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface,
             'GetNumberOfCurrentPlayers', 1, parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_player_achievements(self, steamID, appID, language=None,
             format=None):
@@ -249,7 +266,7 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetPlayerAchievements', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_schema_for_game(self, appID, language=None, format=None):
         """Request the available achievements and stats for a game.
@@ -269,7 +286,7 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetSchemaForGame', 2,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_user_stats_for_game(self, steamID, appID, format=None):
         """Request the user stats for a given game.
@@ -285,12 +302,14 @@ class ISteamUserStats(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetUserStatsForGame', 2,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
 class IPlayerService(_SteamWebAPI):
     def __init__(self):
         self.interface = 'IPlayerService'
         super(IPlayerService, self).__init__()
+
+    # RecordOfflinePlaytime, requires auth ticket
 
     def get_recently_played_games(self, steamID, count=0, format=None):
         """Request a list of recently played games by a given steam id.
@@ -306,7 +325,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetRecentlyPlayedGames', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_owned_games(self, steamID, include_appinfo=1,
             include_played_free_games=0, appids_filter=None, format=None):
@@ -331,7 +350,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetOwnedGames', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_steam_level(self, steamID, format=None):
         """Returns the Steam Level of a user.
@@ -346,7 +365,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetSteamLevel', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_badges(self, steamID, format=None):
         """Gets badges that are owned by a specific user
@@ -361,7 +380,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetBadges', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_community_badge_progress(self, steamID, badgeID, format=None):
         """Gets all the quests needed to get the specified badge, and which are completed.
@@ -377,7 +396,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetCommunityBadgeProgress', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def is_playing_shared_game(self, steamID, appid_playing, format=None):
         """Returns valid lender SteamID if game currently played is borrowed.
@@ -393,7 +412,7 @@ class IPlayerService(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'IsPlayingSharedGame', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
 class ISteamWebAPIUtil(_SteamWebAPI):
     def __init__(self):
@@ -412,7 +431,7 @@ class ISteamWebAPIUtil(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetServerInfo', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
     def get_supported_API_list(self, format=None):
         """Request a list of APIs that can be accessed with your APIKEY
@@ -426,7 +445,7 @@ class ISteamWebAPIUtil(_SteamWebAPI):
         url = self.create_request_url(self.interface, 'GetSupportedAPIList', 1,
             parameters)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format=format)
 
 class SteamCommunityXML(_SteamWebAPI):
     def __init__(self):
@@ -458,20 +477,20 @@ class SteamCommunityXML(_SteamWebAPI):
         """Request the Steam Community XML feed for a specific user."""
         url = self.create_request_url(steamID)
         data = self.retrieve_request(url)
-        return data
+        return self.return_data(data, format='xml')
 
 def main():
     # Tests
     import json
     steamuser = ISteamUser()
-    steamid = json.loads(steamuser.resolve_vanity_url("vanityURL"))['response']['steamid']
+    steamid = steamuser.resolve_vanity_url("vanityURL")['response']['steamid']
     #jsondata = json.loads(data)
     print(steamid)
-    print(json.loads(steamuser.get_player_summaries(steamid))['response']['players'])
+    print(steamuser.get_player_summaries(steamid)['response']['players'])
     steamcomm = SteamCommunityXML()
     print(steamcomm.get_community_info('vanityURL'))
-    sapi = ISteamWebAPIUtil()
-    print(json.loads(sapi.get_supported_API_list()))
+    # sapi = ISteamWebAPIUtil()
+    # print(sapi.get_supported_API_list())
 
 if __name__ == "__main__":
     main()
