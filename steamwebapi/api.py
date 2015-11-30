@@ -45,6 +45,10 @@ APIKEY = os.environ.get('STEAM_API_KEY')
 DEFAULTFORMAT = 'json' #Set to: xml, json, or vdf
 DEFAULTLANG = 'en' #Default language
 
+if not APIKEY:
+    print("Steam Web API key environment variable not set, and the key wasn't supplied elsewhere.")
+    sys.exit(1)
+
 class _SteamWebAPI(object):
     def __init__(self):
         self.apikey = APIKEY
@@ -106,7 +110,7 @@ class ISteamUser(_SteamWebAPI):
 
         steamID: The user ID
         relationship: Type of friend to request (all, friend)
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'relationship' : relationship}
@@ -121,7 +125,7 @@ class ISteamUser(_SteamWebAPI):
         """Request the communities a steam id is banned in.
 
         steamIDS: Comma-delimited list of SteamIDs
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamids' : steamIDS}
@@ -137,7 +141,7 @@ class ISteamUser(_SteamWebAPI):
         Get summaries of steam accounts.
 
         steamIDS: Comma-delimited list of SteamIDs (max: 100)
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamids' : steamIDS}
@@ -152,7 +156,7 @@ class ISteamUser(_SteamWebAPI):
         """Request a list of groups a user is subscribed to.
 
         steamID: User ID
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID}
@@ -169,7 +173,7 @@ class ISteamUser(_SteamWebAPI):
         vanityURL: The users vanity URL
         url_type: The type of vanity URL. 1 (default): Individual profile, 
                     2: Group, 3: Official game group
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'vanityurl' : vanityURL, "url_type" : url_type}
@@ -190,7 +194,7 @@ class ISteamUserStats(_SteamWebAPI):
         unlocked.
 
         gameID: The id of the game.
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'gameid' : gameID}
@@ -210,7 +214,7 @@ class ISteamUserStats(_SteamWebAPI):
         names: A list of names of stats to get.
         startdate: The start time to gather stats. Unix timestamp
         enddate: The end time to gather stats. Unix timestamp
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {
@@ -235,7 +239,7 @@ class ISteamUserStats(_SteamWebAPI):
         """Request the current number of players for a given app.
 
         appID: The app ID
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'appid' : appID}
@@ -252,8 +256,8 @@ class ISteamUserStats(_SteamWebAPI):
 
         steamID: Users steam ID
         appID: The app id
-        language: The language to return the results in. None uses defualt.
-        format: Return format. None defualts to json. (json, xml, vdf)
+        language: The language to return the results in. None uses default.
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'appid' : appID}
@@ -272,8 +276,8 @@ class ISteamUserStats(_SteamWebAPI):
         """Request the available achievements and stats for a game.
 
         appID: The app id
-        language: The language to return the results in. None uses defualt.
-        format: Return format. None defualts to json. (json, xml, vdf)
+        language: The language to return the results in. None uses default.
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'appid' : appID}
@@ -293,7 +297,7 @@ class ISteamUserStats(_SteamWebAPI):
 
         steamID: The users ID
         appID: The app id
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'appid' : appID}
@@ -316,7 +320,7 @@ class IPlayerService(_SteamWebAPI):
 
         steamID: The users ID
         count: Number of games to return. (0 is all recent games.)
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'count' : count}
@@ -335,7 +339,7 @@ class IPlayerService(_SteamWebAPI):
         include_appinfo: boolean.
         include_played_free_games: boolean.
         appids_filter: a json encoded list of app ids.
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {
@@ -356,7 +360,7 @@ class IPlayerService(_SteamWebAPI):
         """Returns the Steam Level of a user.
 
         steamID: The users ID
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID}
@@ -371,7 +375,7 @@ class IPlayerService(_SteamWebAPI):
         """Gets badges that are owned by a specific user
 
         steamID: The users ID
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID}
@@ -387,7 +391,7 @@ class IPlayerService(_SteamWebAPI):
 
         steamID: The users ID
         badgeID: The badge we're asking about
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'badgeid' : badgeID}
@@ -403,7 +407,7 @@ class IPlayerService(_SteamWebAPI):
 
         steamID: The users ID
         appid_playing: The game player is currently playing
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {'steamid' : steamID, 'appid_playing' : appid_playing}
@@ -422,7 +426,7 @@ class ISteamWebAPIUtil(_SteamWebAPI):
     def get_server_info(self, format=None):
         """Request the Steam Web API status and time.
 
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {}
@@ -436,7 +440,7 @@ class ISteamWebAPIUtil(_SteamWebAPI):
     def get_supported_API_list(self, format=None):
         """Request a list of APIs that can be accessed with your APIKEY
 
-        format: Return format. None defualts to json. (json, xml, vdf)
+        format: Return format. None defaults to json. (json, xml, vdf)
 
         """
         parameters = {}
@@ -483,10 +487,14 @@ def main():
     # Tests
     import json
     steamuser = ISteamUser()
-    steamid = steamuser.resolve_vanity_url("vanityURL")['response']['steamid']
+    steamid = steamuser.resolve_vanity_url("vanirtURL")['response']['steamid']
     #jsondata = json.loads(data)
     print(steamid)
     print(steamuser.get_player_summaries(steamid)['response']['players'])
+
+    pserv = IPlayerService()
+    print(pserv.get_recently_played_games(steamid))
+    print(steamuser.get_user_group_list(steamid))
     steamcomm = SteamCommunityXML()
     print(steamcomm.get_community_info('vanityURL'))
     # sapi = ISteamWebAPIUtil()

@@ -24,7 +24,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 import re
 
-from api import ISteamUser, IPlayerService, ISteamUserStats
+from .api import ISteamUser, IPlayerService, ISteamUserStats
 
 class User:
     VisibilityState = {1 : "Private", 2 : "Friends Only", 3 : "Friends of Friends", 4 : "Users Only", 5 : "Public"}
@@ -52,6 +52,9 @@ class User:
         self.gameid = None #If the user is in game this will be set to it's app ID as a string.
         self.gameextrainfo = None #The title of the game.
         self.gameserverip = None #The server URL given as an IP address and port number separated by a colon, this will not be present or set to "0.0.0.0:0" if none is available.
+
+        self.steamlevel = None
+        self.recentlyplayedgames = None
 
     @property
     def communityvisibilitystate(self):
@@ -99,9 +102,10 @@ class Group:
         self.membersonline = None
 
 
-def get_user_info(user):
-    userinfo = UserInfo()
+def get_user_profile(user):
+    userinfo = User()
     steamuser = ISteamUser()
+    playerservice = IPlayerService()
     regex = re.compile('^\d{17}$')
     if regex.match(user):
         userinfo.steamid = user
@@ -114,10 +118,14 @@ def get_user_info(user):
         else:
             exec('userinfo.' + key + ' = ' + '"' + usersummary[key] + '"')
 
+    recent_games = playerservice.get_recently_played_games(userinfo.steamid)['response']['games']
+    steam_level = playerservice.get_steam_level(userinfo.steamid)['response']['player_level']
+    userinfo.recentlyplayedgames = recent_games
+    userinfo.steamlevel = steam_level
     return userinfo
 
 def main():
-    user = get_user_info("vanityURL")
+    user = get_user_profile("vanityURL")
     attrs = vars(user)
     print(attrs)
     #print ', '.join("%s: %s" % item for item in attrs.items())
