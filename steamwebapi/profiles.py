@@ -1,30 +1,9 @@
-#!/usr/bin/env python
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# user.py
-# Version: 0.1.0
-# By: Shawn Silva (ssilva at jatgam dot com)
-# 
-# Created: 07/05/2013
-# Modified: 07/05/2013
-# 
-# Copyright (C) 2013  Shawn Silva
-# -------------------------------
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+"""Builds user and group profiles using the steamwebapi"""
+
 import re
 
 from .api import ISteamUser, IPlayerService, ISteamUserStats
+from .utils import gid_32_to_64_bit
 
 class User:
     VisibilityState = {1 : "Private", 2 : "Friends Only", 3 : "Friends of Friends", 4 : "Users Only", 5 : "Public"}

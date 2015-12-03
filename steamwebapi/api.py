@@ -1,27 +1,5 @@
-#!/usr/bin/env python
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# api.py
-# Version: 0.1.1
-# By: Shawn Silva (ssilva at jatgam dot com)
-# 
-# Created: 07/05/2013
-# Modified: 08/20/2015
-# 
-# Copyright (C) 2013-2015  Shawn Silva
-# -------------------------------
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+"""Steam Web API interaction"""
+
 import sys
 
 PYMAJORVER, PYMINORVER, PYMICROVER, PYRELEASELEVEL, PYSERIAL = sys.version_info
@@ -33,7 +11,6 @@ elif PYMAJORVER == 2 and (PYMINORVER == 7 or PYMINORVER == 6):
     #Python 2.6 or 2.7
     from urllib2 import urlopen
     from urllib import urlencode
-    import printfunction
 else:
     raise PythonVersionError("Python Version 2.6 or greater required.")
 
@@ -452,16 +429,25 @@ class ISteamWebAPIUtil(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class SteamCommunityXML(_SteamWebAPI):
+    USER = 0
+    GROUP = 1
+
     def __init__(self):
         super(SteamCommunityXML, self).__init__()
 
-    def create_request_url(self, steamID):
+    def create_request_url(self, profile_type, steamID):
         """Create the url to submit to the Steam Community XML feed."""
         regex = re.compile('^\d{17}$')
         if regex.match(steamID):
-            url = "http://steamcommunity.com/profiles/%s/?xml=1" % (steamID)
+            if profile_type == self.USER:
+                url = "http://steamcommunity.com/profiles/%s/?xml=1" % (steamID)
+            if profile_type == self.GROUP:
+                url = "http://steamcommunity.com/gid/%s/memberslistxml/?xml=1" % (steamID)
         else:
-            url = "http://steamcommunity.com/id/%s/?xml=1" % (steamID)
+            if profile_type == self.USER:
+                url = "http://steamcommunity.com/id/%s/?xml=1" % (steamID)
+            if profile_type == self.GROUP:
+                url = "http://steamcommunity.com/groups/%s/memberslistxml/?xml=1" % (steamID)
         return url
 
     def retrieve_request(self, url):
@@ -477,9 +463,15 @@ class SteamCommunityXML(_SteamWebAPI):
             sys.exit(2)
         return data.read()
 
-    def get_community_info(self, steamID):
+    def get_user_info(self, steamID):
         """Request the Steam Community XML feed for a specific user."""
-        url = self.create_request_url(steamID)
+        url = self.create_request_url(self.USER, steamID)
+        data = self.retrieve_request(url)
+        return self.return_data(data, format='xml')
+
+    def get_group_info(self, steamID):
+        """Request the Steam Community XML feed for a specific group."""
+        url = self.create_request_url(self.GROUP, steamID)
         data = self.retrieve_request(url)
         return self.return_data(data, format='xml')
 
