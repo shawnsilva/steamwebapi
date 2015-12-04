@@ -52,6 +52,8 @@ class User:
         self.gameextrainfo = None #The title of the game.
         self.gameserverip = None #The server URL given as an IP address and port number separated by a colon, this will not be present or set to "0.0.0.0:0" if none is available.
 
+        self.profileurlname = None
+
         self.steamlevel = None
         self.recentlyplayedgames = None
 
@@ -119,8 +121,17 @@ def get_user_profile(user):
 
     recent_games = playerservice.get_recently_played_games(userinfo.steamid)['response']['games']
     steam_level = playerservice.get_steam_level(userinfo.steamid)['response']['player_level']
+    for game in recent_games:
+        game['img_icon_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_icon_url'])
+        game['img_logo_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_logo_url'])
     userinfo.recentlyplayedgames = recent_games
     userinfo.steamlevel = steam_level
+
+    try:
+        userinfo.profileurlname = re.search(r"id\/(.*)\/", userinfo.profileurl).groups()[0]
+    except:
+        pass
+
     return userinfo
 
 def get_group_profile(group):
