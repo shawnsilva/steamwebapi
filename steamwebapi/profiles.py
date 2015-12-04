@@ -20,9 +20,10 @@
 """Builds user and group profiles using the steamwebapi"""
 
 import re
+import xml.etree.ElementTree as ET
 
-from .api import ISteamUser, IPlayerService, ISteamUserStats
-from .utils import gid_32_to_64_bit
+from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, SteamCommunityXML
+from steamwebapi.utils import gid_32_to_64_bit
 
 class User:
     VisibilityState = {1 : "Private", 2 : "Friends Only", 3 : "Friends of Friends", 4 : "Users Only", 5 : "Public"}
@@ -91,7 +92,7 @@ class Group:
         self.groupurl = None
         self.headline = None
         self.summary = None
-        self.avatar = None
+        self.avataricon = None
         self.avatarmedium = None
         self.avatarfull = None
         self.membercount = None
@@ -121,6 +122,34 @@ def get_user_profile(user):
     userinfo.recentlyplayedgames = recent_games
     userinfo.steamlevel = steam_level
     return userinfo
+
+def get_group_profile(group):
+    groupinfo = Group()
+    steamcomm = SteamCommunityXML()
+    re_id64 = re.compile('^\d{18}$')
+    re_id32 = re.compile('^\d{7}$')
+    # if re_id64.match(group):
+    #     groupinfo.groupid = group
+    if re_id32.match(str(group)):
+        group = gid_32_to_64_bit(group)
+    data = steamcomm.get_group_info(str(group))
+    # Try
+    group_xml = ET.ElementTree(ET.fromstring(data))
+    groupinfo.groupid = group_xml.findtext("groupID64")
+    group_details = group_xml.find("groupDetails")
+    groupinfo.groupname = group_details.findtext("groupName")
+    groupinfo.groupurl = group_details.findtext("groupURL")
+    groupinfo.headline = group_details.findtext("headline")
+    groupinfo.summary = group_details.findtext("summary")
+    groupinfo.avataricon = group_details.findtext("avatarIcon")
+    groupinfo.avatarmedium = group_details.findtext("avatarMedium")
+    groupinfo.avatarfull = group_details.findtext("avatarFull")
+    groupinfo.membercount = group_details.findtext("memberCount")
+    groupinfo.membersinchat = group_details.findtext("membersInChat")
+    groupinfo.membersingame = group_details.findtext("membersInGame")
+    groupinfo.membersonline = group_details.findtext("membersOnline")
+    return groupinfo
+
 
 def main():
     user = get_user_profile("vanityURL")

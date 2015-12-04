@@ -456,7 +456,7 @@ class SteamCommunityXML(_SteamWebAPI):
 
     def create_request_url(self, profile_type, steamID):
         """Create the url to submit to the Steam Community XML feed."""
-        regex = re.compile('^\d{17}$')
+        regex = re.compile('^\d{17,}$')
         if regex.match(steamID):
             if profile_type == self.USER:
                 url = "http://steamcommunity.com/profiles/%s/?xml=1" % (steamID)
