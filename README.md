@@ -10,8 +10,8 @@ users/games/groups.
 #### Install
 
 To install, git clone the repository or download the archive from GitHub.
-Then, run `python setup.py install` to have the package installed. After 
-finishing the planned features the package will be available via pip.
+Then, run `python setup.py install` to have the package installed. You can also
+get the latest release by using `pip install steamwebapi`.
 
 #### Use
 
