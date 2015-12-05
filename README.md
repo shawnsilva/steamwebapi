@@ -15,6 +15,15 @@ finishing the planned features the package will be available via pip.
 
 #### Use
 
+Currently, to use steamwebapi you must supply a Steam API key. There are two
+ways to do that currently. First, you can set an environment variable called
+`STEAM_API_KEY` to your specific key value and the steamwebapi will use that.
+Otherwise, when instantiating an steam interface object you can pass 
+`steam_api_key` in with the API key as its value. For example:
+```python
+steamuserinfo = ISteamUser(steam_api_key='YOURAPIKEY')
+```
+
 The following example will assume that JSON data is being returned, and you
 want access to the data as returned by Valve.
 
@@ -33,6 +42,8 @@ set by the `DEFAULTFORMAT` variable or changed in the paramters of the
 function: `steamuserinfo.resolve_vanity_url("profileURL", format="xml")`.
 
 Alternatively, there is a helper function available to build a "user profile".
+At the moment, to use the profile module the STEAM_API_KEY environment variable
+must be set.
 
 ```python
 from steamwebapi import profiles
@@ -54,3 +65,4 @@ print(vars(user_profile))
     * 3.2.*
     * 2.7.*
     * 2.6.*
+

@@ -41,13 +41,15 @@ APIKEY = os.environ.get('STEAM_API_KEY')
 DEFAULTFORMAT = 'json' #Set to: xml, json, or vdf
 DEFAULTLANG = 'en' #Default language
 
-if not APIKEY:
-    print("Steam Web API key environment variable not set, and the key wasn't supplied elsewhere.")
-    sys.exit(1)
-
 class _SteamWebAPI(object):
-    def __init__(self):
-        self.apikey = APIKEY
+    def __init__(self, steam_api_key=None):
+        if steam_api_key:
+            self.apikey = steam_api_key
+        elif not APIKEY:
+            print("Steam Web API key environment variable not set, and the key wasn't supplied elsewhere.")
+            sys.exit(1)
+        else:
+            self.apikey = APIKEY
         self.format = DEFAULTFORMAT
         self.language = DEFAULTLANG
 
@@ -498,7 +500,7 @@ def main():
     # Tests
     import json
     steamuser = ISteamUser()
-    steamid = steamuser.resolve_vanity_url("vanirtURL")['response']['steamid']
+    steamid = steamuser.resolve_vanity_url("vanityURL")['response']['steamid']
     #jsondata = json.loads(data)
     print(steamid)
     print(steamuser.get_player_summaries(steamid)['response']['players'])
