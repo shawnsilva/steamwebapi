@@ -119,7 +119,11 @@ def get_user_profile(user):
         else:
             exec('userinfo.' + key + ' = ' + '"' + usersummary[key] + '"')
 
-    recent_games = playerservice.get_recently_played_games(userinfo.steamid)['response']['games']
+    games_response = playerservice.get_recently_played_games(userinfo.steamid)['response']
+    if 'games' in games_response:
+        recent_games = games_response['games']
+    else:
+        recent_games = []
     steam_level = playerservice.get_steam_level(userinfo.steamid)['response']['player_level']
     for game in recent_games:
         game['img_icon_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_icon_url'])
