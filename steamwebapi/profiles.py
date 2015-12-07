@@ -25,7 +25,7 @@ import xml.etree.ElementTree as ET
 from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, SteamCommunityXML
 from steamwebapi.utils import gid_32_to_64_bit
 
-class User:
+class User(object):
     VisibilityState = {1 : "Private", 2 : "Friends Only", 3 : "Friends of Friends", 4 : "Users Only", 5 : "Public"}
     PersonaState = {0 : "Offline", 1 : "Online", 2 : "Busy", 3 : "Away", 4 : "Snooze", 5 : "Looking to Trade", 6 : "Looking to Play"}
 
@@ -87,7 +87,7 @@ class User:
     def personastate(self, value):
         self._personastate = value
 
-class Group:
+class Group(object):
     def __init__(self):
         self.groupid = None #The Group's 64bit ID
         self.groupname = None
