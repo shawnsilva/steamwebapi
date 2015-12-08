@@ -119,6 +119,15 @@ def get_user_profile(user):
         else:
             exec('userinfo.' + key + ' = ' + '"' + usersummary[key] + '"')
 
+    # Group ID '103582791429521408' is often encountered.
+    # In hex, that ID is '0x170000000000000' which has 0 in the 
+    # lower 32bits. There is no actual group ID, just the universe,
+    # account type identifiers, and the instance.
+    # https://developer.valvesoftware.com/wiki/SteamID
+    if userinfo.primaryclanid:
+        if (int(userinfo.primaryclanid) & 0x00000000FFFFFFFF) == 0:
+            userinfo.primaryclanid = None
+
     games_response = playerservice.get_recently_played_games(userinfo.steamid)['response']
     if 'games' in games_response:
         recent_games = games_response['games']
