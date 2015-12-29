@@ -1,8 +1,8 @@
 Change Log
 ~~~~~~~~~~
 
-TBD - v0.1.2
-^^^^^^^^^^^^
+December 29, 2015 - v0.1.2
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Mostly bug fixes as described below.
 
