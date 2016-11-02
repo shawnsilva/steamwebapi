@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Copyright (C) 2013-2015  Shawn Silva
+# Copyright (C) 2013-2016  Shawn Silva
 # ------------------------------------
 # This file is part of steamwebapi.
 #
@@ -94,7 +94,7 @@ class _SteamWebAPI(object):
             format = self.format
         if format == "json":
             formatted_data = json.loads(data)
-        else: 
+        else:
             formatted_data = data
         return formatted_data
 
@@ -169,7 +169,7 @@ class ISteamUser(_SteamWebAPI):
         """Request the steam id associated with a vanity url.
 
         vanityURL: The users vanity URL
-        url_type: The type of vanity URL. 1 (default): Individual profile, 
+        url_type: The type of vanity URL. 1 (default): Individual profile,
                     2: Group, 3: Official game group
         format: Return format. None defaults to json. (json, xml, vdf)
 
@@ -188,7 +188,7 @@ class ISteamUserStats(_SteamWebAPI):
         super(ISteamUserStats, self).__init__(**kwargs)
 
     def get_global_achievement_percentages_for_app(self, gameID, format=None):
-        """Request statistics showing global achievements that have been 
+        """Request statistics showing global achievements that have been
         unlocked.
 
         gameID: The id of the game.
