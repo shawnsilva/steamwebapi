@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Copyright (C) 2013-2015  Shawn Silva
+# Copyright (C) 2013-2016  Shawn Silva
 # ------------------------------------
 # This file is part of steamwebapi.
 #
@@ -94,14 +94,14 @@ class _SteamWebAPI(object):
             format = self.format
         if format == "json":
             formatted_data = json.loads(data)
-        else: 
+        else:
             formatted_data = data
         return formatted_data
 
 class ISteamUser(_SteamWebAPI):
-    def __init__(self):
+    def __init__(self,**kwargs):
         self.interface = 'ISteamUser'
-        super(ISteamUser, self).__init__()
+        super(ISteamUser, self).__init__(**kwargs)
 
     def get_friends_list(self, steamID, relationship='all', format=None):
         """Request the friends list of a given steam ID filtered by role.
@@ -169,7 +169,7 @@ class ISteamUser(_SteamWebAPI):
         """Request the steam id associated with a vanity url.
 
         vanityURL: The users vanity URL
-        url_type: The type of vanity URL. 1 (default): Individual profile, 
+        url_type: The type of vanity URL. 1 (default): Individual profile,
                     2: Group, 3: Official game group
         format: Return format. None defaults to json. (json, xml, vdf)
 
@@ -183,12 +183,12 @@ class ISteamUser(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class ISteamUserStats(_SteamWebAPI):
-    def __init__(self):
+    def __init__(self,**kwargs):
         self.interface = 'ISteamUserStats'
-        super(ISteamUserStats, self).__init__()
+        super(ISteamUserStats, self).__init__(**kwargs)
 
     def get_global_achievement_percentages_for_app(self, gameID, format=None):
-        """Request statistics showing global achievements that have been 
+        """Request statistics showing global achievements that have been
         unlocked.
 
         gameID: The id of the game.
@@ -307,9 +307,9 @@ class ISteamUserStats(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class IPlayerService(_SteamWebAPI):
-    def __init__(self):
+    def __init__(self,**kwargs):
         self.interface = 'IPlayerService'
-        super(IPlayerService, self).__init__()
+        super(IPlayerService, self).__init__(**kwargs)
 
     # RecordOfflinePlaytime, requires auth ticket
 
@@ -417,9 +417,9 @@ class IPlayerService(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class ISteamWebAPIUtil(_SteamWebAPI):
-    def __init__(self):
+    def __init__(self,**kwargs):
         self.interface = 'ISteamWebAPIUtil'
-        super(ISteamWebAPIUtil, self).__init__()
+        super(ISteamWebAPIUtil, self).__init__(**kwargs)
 
     def get_server_info(self, format=None):
         """Request the Steam Web API status and time.
@@ -453,8 +453,8 @@ class SteamCommunityXML(_SteamWebAPI):
     USER = 0
     GROUP = 1
 
-    def __init__(self):
-        super(SteamCommunityXML, self).__init__()
+    def __init__(self,**kwargs):
+        super(SteamCommunityXML, self).__init__(**kwargs)
 
     def create_request_url(self, profile_type, steamID):
         """Create the url to submit to the Steam Community XML feed."""

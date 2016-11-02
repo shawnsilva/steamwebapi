@@ -1,6 +1,14 @@
 Change Log
 ~~~~~~~~~~
 
+TBD - v0.1.3
+^^^^^^^^^^^^
+
+Bugs
+....
+
+* Fixed passing API key when instantiating (`#1 <https://github.com/shawnsilva/steamwebapi/pull/1>`_)
+
 December 29, 2015 - v0.1.2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
