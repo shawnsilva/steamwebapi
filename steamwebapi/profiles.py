@@ -138,7 +138,9 @@ def get_user_profile(user):
         # Sometimes, games don't have keys for 'name', or 'img_*_url' apparently.
         if 'img_icon_url' in game and 'appid' in game:
             game['img_icon_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_icon_url'])
-            game['img_logo_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_logo_url'])
+            # Some games don't have keys for 'img_logo_url' and do have for 'img_icon_url'.
+            if 'img_logo_url' in game:
+                game['img_logo_url'] = "http://media.steampowered.com/steamcommunity/public/images/apps/{appid}/{hash}.jpg".format(appid=game['appid'], hash=game['img_logo_url'])
     userinfo.recentlyplayedgames = recent_games
     userinfo.steamlevel = steam_level
 
