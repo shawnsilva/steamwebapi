@@ -17,5 +17,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-__version__ = "0.1.4"
+__version__ = "0.1.5.dev"
 __author__ = "Shawn Silva"
