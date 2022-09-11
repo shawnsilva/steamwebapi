@@ -99,7 +99,7 @@ class _SteamWebAPI(object):
         return formatted_data
 
 class ISteamUser(_SteamWebAPI):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.interface = 'ISteamUser'
         super(ISteamUser, self).__init__(**kwargs)
 
@@ -183,7 +183,7 @@ class ISteamUser(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class ISteamUserStats(_SteamWebAPI):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.interface = 'ISteamUserStats'
         super(ISteamUserStats, self).__init__(**kwargs)
 
@@ -307,7 +307,7 @@ class ISteamUserStats(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class IPlayerService(_SteamWebAPI):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.interface = 'IPlayerService'
         super(IPlayerService, self).__init__(**kwargs)
 
@@ -417,7 +417,7 @@ class IPlayerService(_SteamWebAPI):
         return self.return_data(data, format=format)
 
 class ISteamWebAPIUtil(_SteamWebAPI):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         self.interface = 'ISteamWebAPIUtil'
         super(ISteamWebAPIUtil, self).__init__(**kwargs)
 
@@ -453,7 +453,7 @@ class SteamCommunityXML(_SteamWebAPI):
     USER = 0
     GROUP = 1
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         super(SteamCommunityXML, self).__init__(**kwargs)
 
     def create_request_url(self, profile_type, steamID):
@@ -509,7 +509,7 @@ def main():
     print(pserv.get_recently_played_games(steamid))
     print(steamuser.get_user_group_list(steamid))
     steamcomm = SteamCommunityXML()
-    print(steamcomm.get_community_info('vanityURL'))
+    print(steamcomm.get_user_info('vanityURL'))
     # sapi = ISteamWebAPIUtil()
     # print(sapi.get_supported_API_list())
 

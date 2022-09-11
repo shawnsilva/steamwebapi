@@ -103,10 +103,10 @@ class Group(object):
         self.membersonline = None
 
 
-def get_user_profile(user):
+def get_user_profile(user, steam_api_key=None):
     userinfo = User()
-    steamuser = ISteamUser()
-    playerservice = IPlayerService()
+    steamuser = ISteamUser(steam_api_key=steam_api_key)
+    playerservice = IPlayerService(steam_api_key=steam_api_key)
     regex = re.compile('^\d{17}$')
     if regex.match(user):
         userinfo.steamid = user
@@ -120,7 +120,7 @@ def get_user_profile(user):
             exec('userinfo.' + key + ' = ' + '"' + usersummary[key] + '"')
 
     # Group ID '103582791429521408' is often encountered.
-    # In hex, that ID is '0x170000000000000' which has 0 in the 
+    # In hex, that ID is '0x170000000000000' which has 0 in the
     # lower 32bits. There is no actual group ID, just the universe,
     # account type identifiers, and the instance.
     # https://developer.valvesoftware.com/wiki/SteamID
@@ -151,9 +151,9 @@ def get_user_profile(user):
 
     return userinfo
 
-def get_group_profile(group):
+def get_group_profile(group, steam_api_key=None):
     groupinfo = Group()
-    steamcomm = SteamCommunityXML()
+    steamcomm = SteamCommunityXML(steam_api_key=steam_api_key)
     re_id64 = re.compile('^\d{18}$')
     re_id32 = re.compile('^\d{7}$')
     # if re_id64.match(group):
