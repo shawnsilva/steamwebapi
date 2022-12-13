@@ -133,7 +133,13 @@ def get_user_profile(user, steam_api_key=None):
         recent_games = games_response['games']
     else:
         recent_games = []
-    steam_level = playerservice.get_steam_level(userinfo.steamid)['response']['player_level']
+
+    # Sometimes, the 'player_level' key is not present.
+    level_response = playerservice.get_steam_level(userinfo.steamid)['response']
+    steam_level = 0 # Default to 0.
+    if 'player_level' in level_response:
+        steam_level = level_response['player_level'] # If present, use it.
+
     for game in recent_games:
         # Sometimes, games don't have keys for 'name', or 'img_*_url' apparently.
         if 'img_icon_url' in game and 'appid' in game:
